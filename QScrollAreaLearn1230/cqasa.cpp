@@ -1,4 +1,5 @@
 #include "cqasa.h"
+#include <QDebug>
 
 CQASA::CQASA(QWidget *p)
     :QAbstractScrollArea(p)
@@ -9,10 +10,14 @@ CQASA::CQASA(QWidget *p)
     psh = new QScrollBar;
     psv = new QScrollBar;
 
+    qDebug() << pw1->parent();
+
     setVerticalScrollBar(psv);
     setHorizontalScrollBar(psh);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setViewport(pw1);
+
+    qDebug() << pw1->parent();
 
     QPalette p1;
     p1.setColor(QPalette::Background, QColor(1,111,1)); //绿色
@@ -24,14 +29,15 @@ CQASA::CQASA(QWidget *p)
     setAutoFillBackground(1);
     setPalette(p2);
 
-    psh->setStyleSheet("background-color:rgb(255,1,1);"); //红色
+    psh->setStyleSheet("background-color:rgb(104,104,104);"); //红色
     connect(psh, &QScrollBar::actionTriggered, this, &CQASA::f1);
     connect(psv, &QScrollBar::actionTriggered, this, &CQASA::f1);
 }
 
 void CQASA::js()
 {
-    psv->setPageStep(viewport()->height()); psh->setPageStep(viewport()->width());
+    psv->setPageStep(viewport()->height());
+    psh->setPageStep(viewport()->width());
     psv->setRange(0, psub->height() - viewport()->height());
     psh->setRange(0, psub->width() - viewport()->width());
 }
@@ -52,17 +58,14 @@ bool CQASA::viewportEvent(QEvent *e)
         //rect()不能获取子部件左上角的坐标，需使用geometry()函数。
         //以下代码处理恢复子部件位置时的情况。具体计算原理见图10-16。
         if(psub->height()+psub->geometry().y()<viewport()->height()){
-                    psub->move(psub->geometry().x(),-vv);	}  //移动子部件位置
+            psub->move(psub->geometry().x(),-vv);
+        }  //移动子部件位置
         if(psub->width()+psub->geometry().x()<viewport()->width()){
-                psub->move(-hv,psub->geometry().y());	}
-        js();   					//设置滚动条的滚动范围，此步重要，否则不会显示滚动条。
-    }							//if结束
+            psub->move(-hv,psub->geometry().y());
+        }
+        js();//设置滚动条的滚动范围，此步重要，否则不会显示滚动条。
+    }
 
-    //本示例不需要处理QPaintEvent事件，因为QPaintEvent事件在某些时候不会被发送，
-    //比如初次显示界面时就不会发送QPaintEvent事件，但会发送QResizeEvent事件，
-    //因此本示例处理QResizeEvent事件，而不处理QPaintEvent事件
-    if(psub!=0&&e->type()==QEvent::Paint){  }
-            //viewport()->update();  					//不能调用该函数，否则会无限循环。
     return QAbstractScrollArea::viewportEvent(e);
     //viewportEvent结束
 
