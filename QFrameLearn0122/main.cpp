@@ -1,5 +1,3 @@
-#include "widget.h"
-
 #include <QApplication>
 #include <QFrame>
 
