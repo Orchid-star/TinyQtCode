@@ -1,3 +1,5 @@
+// Code is from《Q5.10完全参考手册》 黄勇
+
 #include "qsplitter.h"
 #include "qpushbutton.h"
 #include "QVBoxLayout"
